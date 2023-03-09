@@ -1,0 +1,16 @@
+core-config:
+  workspace: ${user.home}/${spring.application.name}
+  git:
+    username:
+    token:
+    repository:
+spring:
+  application:
+    name: GuGu_Blog_Sync_Core
+server:
+  port: 9091
+  servlet:
+    context-path: /
+logging:
+  file:
+    name: ${core-config.workspace}/logs/gugu_blog_sync_core.log

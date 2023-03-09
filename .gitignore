@@ -14,10 +14,13 @@
 *.tar.gz
 *.rar
 
+# Maven
+target
 
 # IntelliJ
 out/
 .idea
+*.iml
 
 # Visio
 *.vsdx
