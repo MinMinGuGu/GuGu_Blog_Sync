@@ -12,6 +12,14 @@
     <artifactId>gugu_blog_sync_wordpress</artifactId>
     <description>适配wordpress</description>
 
+    <developers>
+        <developer>
+            <id>qinuo</id>
+            <name>qinuo</name>
+            <url>https://github.com/Uni12321</url>
+        </developer>
+    </developers>
+
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
