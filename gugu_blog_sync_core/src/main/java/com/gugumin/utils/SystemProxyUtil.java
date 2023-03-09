@@ -12,7 +12,7 @@ public class SystemProxyUtil {
 
 
     /**
-     * 设置代理Http端口
+     * 设置代理端口
      *
      * @param host host
      * @param port 端口
@@ -22,7 +22,7 @@ public class SystemProxyUtil {
     }
 
     /**
-     * 设置代理Http端口
+     * 设置代理端口
      *
      * @param host host
      * @param port 端口
@@ -35,7 +35,7 @@ public class SystemProxyUtil {
     }
 
     /**
-     * 移除本地代理Http
+     * 移除代理
      */
     public static void removeHttpProxy() {
         System.getProperties().remove("http.proxyHost");
