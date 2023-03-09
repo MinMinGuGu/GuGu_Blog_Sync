@@ -15,6 +15,11 @@
     <dependencies>
         <dependency>
             <groupId>com.gugumin</groupId>
+            <artifactId>gugu_blog_sync_wordpress</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gugumin</groupId>
             <artifactId>gugu_blog_sync_example</artifactId>
             <version>${parent.version}</version>
         </dependency>

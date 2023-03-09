@@ -20,6 +20,7 @@
         <module>gugu_blog_sync_core</module>
         <module>gugu_blog_sync_common</module>
         <module>gugu_blog_sync_example</module>
+        <module>gugu_blog_sync_wordpress</module>
     </modules>
 
     <properties>
