@@ -24,6 +24,10 @@
             <version>${parent.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.gugumin</groupId>
             <artifactId>gugu_blog_sync_common</artifactId>
             <version>${parent.version}</version>
