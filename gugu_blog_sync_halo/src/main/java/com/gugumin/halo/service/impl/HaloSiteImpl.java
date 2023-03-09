@@ -41,7 +41,7 @@ public class HaloSiteImpl implements ISite {
     @Override
     public List<Article> getArticles() {
         log.info("开始获取halo站点的所有文章");
-        List<Integer> idList = getAllPublishedId();
+        List<Integer> idList = getAllPublishedMdId();
         log.info("成功获取halo站点的所有文章id");
         log.debug("getAllPublishedId={}", idList);
         return analyzeArticleList(idList);
@@ -68,7 +68,7 @@ public class HaloSiteImpl implements ISite {
         return synchronizedList;
     }
 
-    private List<Integer> getAllPublishedId() {
+    private List<Integer> getAllPublishedMdId() {
         JSONArray idJsonArray = JsonPath.read(haloApi.posts(), "$.data.content");
         return idJsonArray.stream().map(content -> {
             String editorType = JsonPath.read(content, "$.editorType").toString();
