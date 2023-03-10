@@ -1,5 +1,9 @@
 core-config:
   workspace: ${user.home}/${spring.application.name}
+  proxy:
+    open:
+    host:
+    port:
   git:
     username:
     token:
