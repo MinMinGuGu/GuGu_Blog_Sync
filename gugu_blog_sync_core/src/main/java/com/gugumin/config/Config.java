@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 @ConfigurationProperties("core-config")
 public class Config {
     private String workspace;
+    private Proxy proxy;
     private Git git;
 
     /**
@@ -30,6 +31,14 @@ public class Config {
     public Path getRepositoryPath() {
         String projectName = git.repository.substring(git.repository.lastIndexOf("/") + 1).replace(".git", "");
         return Paths.get(workspace, projectName);
+    }
+
+    @Getter
+    @Setter
+    public static class Proxy {
+        private boolean open;
+        private String host;
+        private Integer port;
     }
 
     /**

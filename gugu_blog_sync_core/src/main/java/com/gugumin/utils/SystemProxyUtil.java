@@ -1,7 +1,7 @@
 package com.gugumin.utils;
 
 /**
- * Java程序Http代理设置
+ * Java代理设置
  *
  * @author minmin
  * @since 2021 /05/02 12:20
@@ -10,27 +10,9 @@ public class SystemProxyUtil {
     private SystemProxyUtil() {
     }
 
-    /**
-     * 设置本地代理Http端口 无验证
-     *
-     * @param port 端口
-     */
-    public static void setHttpProxy(int port) {
-        setHttpProxy(String.valueOf(port));
-    }
 
     /**
-     * 设置本地代理Http端口 无验证
-     *
-     * @param port 端口
-     */
-    public static void setHttpProxy(String port) {
-        System.setProperty("proxyHost", "127.0.0.1");
-        System.setProperty("proxyPort", port);
-    }
-
-    /**
-     * 设置代理Http端口
+     * 设置代理端口
      *
      * @param host host
      * @param port 端口
@@ -40,21 +22,25 @@ public class SystemProxyUtil {
     }
 
     /**
-     * 设置代理Http端口
+     * 设置代理端口
      *
      * @param host host
      * @param port 端口
      */
     public static void setHttpProxy(String host, String port) {
-        System.setProperty("proxyHost", host);
-        System.setProperty("proxyPort", port);
+        System.setProperty("http.proxyHost", host);
+        System.setProperty("http.proxyPort", port);
+        System.setProperty("https.proxyHost", host);
+        System.setProperty("https.proxyPort", port);
     }
 
     /**
-     * 移除本地代理Http
+     * 移除代理
      */
     public static void removeHttpProxy() {
-        System.getProperties().remove("proxyHost");
-        System.getProperties().remove("proxyPort");
+        System.getProperties().remove("http.proxyHost");
+        System.getProperties().remove("http.proxyPort");
+        System.getProperties().remove("https.proxyHost");
+        System.getProperties().remove("https.proxyPort");
     }
 }
