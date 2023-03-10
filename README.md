@@ -1,3 +1,3 @@
 # GuGu_Blog_Sync
 
-这里是develop分支，开发请基于此分支拉取一个新分支。
+这里是develop分支，此分支将提供仓库下所有develop开头的分支的开发基础。
