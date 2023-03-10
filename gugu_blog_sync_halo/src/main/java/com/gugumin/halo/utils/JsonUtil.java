@@ -31,7 +31,7 @@ public class JsonUtil {
      * @param <T>         the type parameter
      * @param json        the json
      * @param targetClass the target class
-     * @return t
+     * @return t t
      */
     @SneakyThrows
     public static <T> T json2Obj(String json, Class<T> targetClass) {

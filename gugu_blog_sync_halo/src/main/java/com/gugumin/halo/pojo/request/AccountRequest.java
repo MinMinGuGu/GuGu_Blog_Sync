@@ -5,13 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * The type Account request.
+ *
  * @author minmin
- * @date 2023/03/08
+ * @date 2023 /03/08
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+public class AccountRequest {
     private String username;
     private String password;
 }

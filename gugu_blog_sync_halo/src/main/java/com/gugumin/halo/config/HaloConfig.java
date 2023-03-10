@@ -10,8 +10,10 @@ import org.springframework.context.annotation.PropertySource;
 import javax.annotation.PostConstruct;
 
 /**
+ * The type Halo config.
+ *
  * @author minmin
- * @date 2023/03/08
+ * @date 2023 /03/08
  */
 @Setter
 @Getter

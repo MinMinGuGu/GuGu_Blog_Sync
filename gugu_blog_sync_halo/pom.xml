@@ -12,6 +12,13 @@
     <artifactId>gugu_blog_sync_halo</artifactId>
     <description>适配halo-1.6.0版本</description>
 
+    <developers>
+        <developer>
+            <id>minmin</id>
+            <url>https://github.com/GuGuMinMin</url>
+        </developer>
+    </developers>
+
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

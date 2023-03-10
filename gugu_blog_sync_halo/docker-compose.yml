@@ -1,0 +1,5 @@
+services:
+  test_halo:
+    image: halohub/halo:1.6.0
+    ports:
+      - 8090:8090

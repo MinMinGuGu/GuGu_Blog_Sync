@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * The type Posts response.
+ *
  * @author minmin
- * @date 2023/03/08
+ * @date 2023 /03/08
  */
 @Data
-public class Posts {
+public class PostsResponse {
     private Integer id;
     private String title;
     private String status;
@@ -45,6 +47,11 @@ public class Posts {
     private String formatContent;
     private Boolean topped;
 
+    /**
+     * To article article.
+     *
+     * @return the article
+     */
     public Article toArticle() {
         String newContent = "<!--" +
                 "categories=" +
@@ -58,6 +65,9 @@ public class Posts {
         return new Article(title, newContent);
     }
 
+    /**
+     * The type Tags.
+     */
     @Data
     public static class Tags {
         private Integer id;
@@ -69,6 +79,9 @@ public class Posts {
         private String fullPath;
     }
 
+    /**
+     * The type Categories.
+     */
     @Data
     public static class Categories {
         private Integer id;
