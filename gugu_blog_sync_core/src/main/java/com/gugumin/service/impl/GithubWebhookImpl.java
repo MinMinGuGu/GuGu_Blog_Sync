@@ -3,6 +3,7 @@ package com.gugumin.service.impl;
 import com.gugumin.components.SiteObserver;
 import com.gugumin.config.Config;
 import com.gugumin.pojo.Article;
+import com.gugumin.pojo.MetaType;
 import com.gugumin.service.IGithubWebhook;
 import com.gugumin.utils.FileUtil;
 import com.jayway.jsonpath.JsonPath;
@@ -12,6 +13,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.nio.file.Path;
 import java.util.Collections;
@@ -72,7 +74,7 @@ public class GithubWebhookImpl implements IGithubWebhook {
     }
 
     private List<Article> analyzeAndRead(Path repositoryPath, JSONArray jsonArray) {
-        if (jsonArray.size() < 1) {
+        if (CollectionUtils.isEmpty(jsonArray)) {
             return Collections.emptyList();
         }
         return jsonArray.stream().map(obj -> {
@@ -81,9 +83,10 @@ public class GithubWebhookImpl implements IGithubWebhook {
                 return null;
             }
             Path filePath = repositoryPath.resolve(fileUri);
-            String context = FileUtil.read(filePath);
             String title = fileUri.substring(fileUri.lastIndexOf("/") + 1).replace(MD_SUFFIX, "");
-            return new Article(title, context);
+            String context = FileUtil.read(filePath);
+            MetaType metaType = Article.parseMetaFromContext(context);
+            return metaType.parseMetaAndConvert(title, context);
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 }

@@ -20,7 +20,6 @@ import java.nio.file.Paths;
 @ConfigurationProperties("core-config")
 public class Config {
     private String workspace;
-
     private Git git;
 
     /**
