@@ -61,7 +61,7 @@ public enum MetaType {
                 throw new RuntimeException("没有适配的MetaType");
             }
         }
-        return new Article(title, contextWithoutMeta, meta);
+        return new Article(title, contextWithoutMeta, meta, this);
     }
 
     @SneakyThrows
