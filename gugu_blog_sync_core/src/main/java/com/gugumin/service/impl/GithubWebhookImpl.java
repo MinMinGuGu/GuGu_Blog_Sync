@@ -48,6 +48,7 @@ public class GithubWebhookImpl implements IGithubWebhook {
 
     @Override
     public void handler(String payload) {
+        log.debug("payload: {}", payload);
         gitService.updateRepository();
         Path repositoryPath = config.getRepositoryPath();
         JSONArray added = JsonPath.read(payload, "$.head_commit.added");
