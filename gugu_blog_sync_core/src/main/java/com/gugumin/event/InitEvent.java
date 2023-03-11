@@ -75,7 +75,7 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
             String fileName = article.getName() + ".md";
             if (Files.notExists(repositoryPath.resolve(fileName))) {
                 EXECUTOR_SERVICE.execute(() -> {
-                    FileUtil.write(repositoryPath.resolve(fileName), Article.parseMetaFromContext(article.getContext()).generateMetaAndContext(article));
+                    FileUtil.write(repositoryPath.resolve(fileName), article.getMetaType().generateMetaAndContext(article));
                     log.info("成功将站点文章写入到 {}", repositoryPath.resolve(fileName));
                     countDownLatch.countDown();
                 });

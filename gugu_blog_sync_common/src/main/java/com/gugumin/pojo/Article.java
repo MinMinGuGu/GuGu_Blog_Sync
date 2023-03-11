@@ -19,6 +19,7 @@ public class Article {
     private String name;
     private String context;
     private Meta meta;
+    private MetaType metaType;
 
     public static MetaType parseMetaFromContext(String context) {
         Matcher matcher = META_PATTERN.matcher(context);
