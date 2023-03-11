@@ -12,6 +12,7 @@ import java.util.List;
 public class Meta {
     private List<Category> categories;
     private List<Tag> tags;
+    private String summary;
 
     @Data
     public static class Category {

@@ -49,12 +49,12 @@ public class GithubWebhookImpl implements IGithubWebhook {
     @Override
     public void handler(String payload) {
         log.debug("payload: {}", payload);
-        gitService.updateRepository();
         Path repositoryPath = config.getRepositoryPath();
-        JSONArray added = JsonPath.read(payload, "$.head_commit.added");
-        siteObserver.postNotice(analyzeAndRead(repositoryPath, added), SiteObserver.NoticeType.ADD_ARTICLE);
         JSONArray removed = JsonPath.read(payload, "$.head_commit.removed");
         siteObserver.postNotice(analyzeAndRead(repositoryPath, removed), SiteObserver.NoticeType.REMOVE_ARTICLE);
+        gitService.updateRepository();
+        JSONArray added = JsonPath.read(payload, "$.head_commit.added");
+        siteObserver.postNotice(analyzeAndRead(repositoryPath, added), SiteObserver.NoticeType.ADD_ARTICLE);
         JSONArray modified = JsonPath.read(payload, "$.head_commit.modified");
         siteObserver.postNotice(analyzeAndRead(repositoryPath, modified), SiteObserver.NoticeType.UPDATE_ARTICLE);
     }
