@@ -38,7 +38,7 @@ public class GithubWebhookImpl implements IGithubWebhook {
      *
      * @param siteObserver the site observer
      * @param config       the config
-     * @param gitService
+     * @param gitService   gitService
      */
     public GithubWebhookImpl(SiteObserver siteObserver, Config config, IGitService gitService) {
         this.siteObserver = siteObserver;
@@ -48,6 +48,7 @@ public class GithubWebhookImpl implements IGithubWebhook {
 
     @Override
     public void handler(String payload) {
+        gitService.updateRepository();
         Path repositoryPath = config.getRepositoryPath();
         JSONArray added = JsonPath.read(payload, "$.head_commit.added");
         siteObserver.postNotice(analyzeAndRead(repositoryPath, added), SiteObserver.NoticeType.ADD_ARTICLE);
@@ -55,7 +56,6 @@ public class GithubWebhookImpl implements IGithubWebhook {
         siteObserver.postNotice(analyzeAndRead(repositoryPath, removed), SiteObserver.NoticeType.REMOVE_ARTICLE);
         JSONArray modified = JsonPath.read(payload, "$.head_commit.modified");
         siteObserver.postNotice(analyzeAndRead(repositoryPath, modified), SiteObserver.NoticeType.UPDATE_ARTICLE);
-        gitService.updateRepository();
     }
 
     private List<Article> analyzeAndRead(Path repositoryPath, JSONArray jsonArray) {
