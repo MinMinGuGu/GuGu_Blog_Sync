@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 @Component
 public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool(r -> new Thread(r, "InitEvent-Task"));
+    private static boolean initFlag = false;
     private final SiteObserver siteObserver;
     private final Config config;
     private final IGitService gitService;
@@ -64,6 +65,19 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
         log.info("应用初始化完毕 正在监听webhook");
     }
 
+    /**
+     * Consume init flag boolean.
+     *
+     * @return the boolean
+     */
+    public static boolean consumeInitFlag() {
+        boolean flag = initFlag;
+        if (initFlag) {
+            initFlag = false;
+        }
+        return flag;
+    }
+
     @SneakyThrows
     private void tryPullSiteData2Repository(Path repositoryPath) {
         List<Article> articleList = siteObserver.postNotice(null, SiteObserver.NoticeType.GET_ARTICLE);
@@ -87,5 +101,6 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
         countDownLatch.await();
         log.info("站点文章拉取到本地仓库完成");
         gitService.pushRepository();
+        initFlag = true;
     }
 }

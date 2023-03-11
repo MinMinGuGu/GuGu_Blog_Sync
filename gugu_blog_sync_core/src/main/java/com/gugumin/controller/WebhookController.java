@@ -1,5 +1,6 @@
 package com.gugumin.controller;
 
+import com.gugumin.event.InitEvent;
 import com.gugumin.service.IGithubWebhook;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,9 @@ public class WebhookController {
      */
     @PostMapping("/webhook")
     public ResponseEntity<?> webhook(@RequestBody String payload) {
+        if (InitEvent.consumeInitFlag()) {
+            return ResponseEntity.ok().build();
+        }
         githubWebhook.handler(payload);
         return ResponseEntity.ok().build();
     }
