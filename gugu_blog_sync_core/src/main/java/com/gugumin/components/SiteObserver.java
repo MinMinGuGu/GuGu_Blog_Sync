@@ -63,6 +63,7 @@ public class SiteObserver {
                 EXECUTOR_SERVICE.shutdownNow();
             }
         } catch (InterruptedException e) {
+            log.info("SiteObserver 线程池无法正常关闭");
             throw new RuntimeException(e);
         }
         log.info("SiteObserver 线程池已经关闭");
