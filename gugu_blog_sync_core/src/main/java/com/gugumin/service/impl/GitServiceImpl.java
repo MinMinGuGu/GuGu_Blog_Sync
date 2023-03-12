@@ -1,6 +1,6 @@
 package com.gugumin.service.impl;
 
-import com.gugumin.config.Config;
+import com.gugumin.config.CoreConfig;
 import com.gugumin.service.IGitService;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
@@ -23,25 +23,25 @@ import java.nio.file.Path;
 @Slf4j
 @Service
 public class GitServiceImpl implements IGitService {
-    private final Config config;
+    private final CoreConfig coreConfig;
 
     /**
      * Instantiates a new Git service.
      *
-     * @param config the config
+     * @param coreConfig the config
      */
-    public GitServiceImpl(Config config) {
-        this.config = config;
+    public GitServiceImpl(CoreConfig coreConfig) {
+        this.coreConfig = coreConfig;
     }
 
     @Override
     public void initRepository() {
-        Path repositoryPath = config.getRepositoryPath();
+        Path repositoryPath = coreConfig.getRepositoryPath();
         try {
             CloneCommand cloneCommand = Git.cloneRepository()
-                    .setURI(config.getGit().getRepository())
+                    .setURI(coreConfig.getGit().getRepository())
                     .setDirectory(repositoryPath.toFile());
-            cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.getGit().getUsername(), config.getGit().getToken()));
+            cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(coreConfig.getGit().getUsername(), coreConfig.getGit().getToken()));
             cloneCommand.call().close();
             log.info("克隆git仓库成功");
             Git open = Git.open(repositoryPath.toFile());
@@ -61,13 +61,13 @@ public class GitServiceImpl implements IGitService {
     @Override
     public void pushRepository() {
         log.info("准备开始将本地仓库同步到git远程仓库");
-        Path repositoryPath = config.getRepositoryPath();
+        Path repositoryPath = coreConfig.getRepositoryPath();
         try {
             Git open = Git.open(repositoryPath.toFile());
             open.add().addFilepattern(".").call();
             open.commit().setMessage("提交站点文章").call();
             open.push()
-                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.getGit().getUsername(), config.getGit().getToken()))
+                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(coreConfig.getGit().getUsername(), coreConfig.getGit().getToken()))
                     .setPushAll()
                     .call();
             open.close();
@@ -80,11 +80,11 @@ public class GitServiceImpl implements IGitService {
 
     @Override
     public void updateRepository() {
-        Path repositoryPath = config.getRepositoryPath();
+        Path repositoryPath = coreConfig.getRepositoryPath();
         try (Git git = Git.open(repositoryPath.toFile())) {
             PullCommand pullCommand = git.pull()
                     .setRemote("origin");
-            pullCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(config.getGit().getUsername(), config.getGit().getToken()));
+            pullCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(coreConfig.getGit().getUsername(), coreConfig.getGit().getToken()));
             pullCommand.call();
             log.info("更新本地分支成功");
         } catch (Exception e) {

@@ -1,7 +1,7 @@
 package com.gugumin.service.impl;
 
 import com.gugumin.components.SiteObserver;
-import com.gugumin.config.Config;
+import com.gugumin.config.CoreConfig;
 import com.gugumin.pojo.Article;
 import com.gugumin.pojo.MetaType;
 import com.gugumin.service.IGitService;
@@ -30,26 +30,26 @@ import java.util.stream.Collectors;
 public class GithubWebhookImpl implements IGithubWebhook {
     private static final String MD_SUFFIX = ".md";
     private final SiteObserver siteObserver;
-    private final Config config;
+    private final CoreConfig coreConfig;
     private final IGitService gitService;
 
     /**
      * Instantiates a new Github webhook.
      *
      * @param siteObserver the site observer
-     * @param config       the config
+     * @param coreConfig   the config
      * @param gitService   gitService
      */
-    public GithubWebhookImpl(SiteObserver siteObserver, Config config, IGitService gitService) {
+    public GithubWebhookImpl(SiteObserver siteObserver, CoreConfig coreConfig, IGitService gitService) {
         this.siteObserver = siteObserver;
-        this.config = config;
+        this.coreConfig = coreConfig;
         this.gitService = gitService;
     }
 
     @Override
     public void handler(String payload) {
         log.debug("payload: {}", payload);
-        Path repositoryPath = config.getRepositoryPath();
+        Path repositoryPath = coreConfig.getRepositoryPath();
         JSONArray removed = JsonPath.read(payload, "$.head_commit.removed");
         siteObserver.postNotice(analyzeAndRead(repositoryPath, removed), SiteObserver.NoticeType.REMOVE_ARTICLE);
         gitService.updateRepository();

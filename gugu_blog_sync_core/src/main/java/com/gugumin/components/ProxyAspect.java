@@ -1,6 +1,6 @@
 package com.gugumin.components;
 
-import com.gugumin.config.Config;
+import com.gugumin.config.CoreConfig;
 import com.gugumin.utils.SystemProxyUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -17,15 +17,15 @@ import org.springframework.stereotype.Component;
 @Component
 @Aspect
 public class ProxyAspect {
-    private final Config config;
+    private final CoreConfig coreConfig;
 
     /**
      * Instantiates a new Proxy aspect.
      *
-     * @param config the config
+     * @param coreConfig the config
      */
-    public ProxyAspect(Config config) {
-        this.config = config;
+    public ProxyAspect(CoreConfig coreConfig) {
+        this.coreConfig = coreConfig;
     }
 
     @Pointcut("execution(* com.gugumin.service.impl.GitServiceImpl.*(..))")
@@ -41,7 +41,7 @@ public class ProxyAspect {
      */
     @Around("git()")
     public Object proxy(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        Config.Proxy configProxy = config.getProxy();
+        CoreConfig.Proxy configProxy = coreConfig.getProxy();
         if (configProxy != null && configProxy.isOpen()) {
             SystemProxyUtil.setHttpProxy(configProxy.getHost(), configProxy.getPort());
             Object proceed = proceedingJoinPoint.proceed();
