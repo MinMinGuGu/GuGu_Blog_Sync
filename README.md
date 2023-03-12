@@ -1,3 +1,3 @@
 # GuGu_Blog_Sync
 
-这里是develop分支，该分支基于main分支拉取，此分支将为仓库下所有develop开头的分支提供开发基础。
+这里是Main分支，此分支仅提供二次开发。
