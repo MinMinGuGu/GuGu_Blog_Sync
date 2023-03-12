@@ -1,7 +1,7 @@
 core-config:
   workspace: ${user.home}/${spring.application.name}
   proxy:
-    open:
+    open: false
     host:
     port:
   git:
@@ -10,7 +10,7 @@ core-config:
     repository:
 spring:
   application:
-    name: GuGu_Blog_Sync_Core
+    name: GuGu_Blog_Sync
 server:
   port: 9091
   servlet:
