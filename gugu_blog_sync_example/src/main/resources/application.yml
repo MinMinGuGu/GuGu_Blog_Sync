@@ -10,7 +10,7 @@ core-config:
     repository:
 spring:
   application:
-    name: GuGu_Blog_Sync
+    name: GuGu_Blog_Sync_Example
 server:
   port: 9091
   servlet:

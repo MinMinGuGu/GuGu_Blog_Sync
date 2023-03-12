@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * The type Webhook controller.
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @date 2023 /03/08
  */
 @Controller
-public class WebhookController {
+@RequestMapping("/github")
+public class GithubController {
     private final IGithubWebhook githubWebhook;
 
     /**
@@ -22,7 +24,7 @@ public class WebhookController {
      *
      * @param githubWebhook the github webhook
      */
-    public WebhookController(IGithubWebhook githubWebhook) {
+    public GithubController(IGithubWebhook githubWebhook) {
         this.githubWebhook = githubWebhook;
     }
 

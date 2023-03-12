@@ -1,4 +1,4 @@
-package com.gugumin;
+package org.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * The type Application.
  *
  * @author minmin
- * @date 2023 /03/06
+ * @date 2023 /03/12
  */
 @SpringBootApplication
 public class Application {

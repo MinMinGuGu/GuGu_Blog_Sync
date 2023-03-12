@@ -1,7 +1,7 @@
 package com.gugumin.event;
 
 import com.gugumin.components.SiteObserver;
-import com.gugumin.config.Config;
+import com.gugumin.config.CoreConfig;
 import com.gugumin.pojo.Article;
 import com.gugumin.service.IGitService;
 import com.gugumin.utils.FileUtil;
@@ -32,19 +32,19 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool(r -> new Thread(r, "InitEvent-Task"));
     private static boolean initFlag = false;
     private final SiteObserver siteObserver;
-    private final Config config;
+    private final CoreConfig coreConfig;
     private final IGitService gitService;
 
     /**
      * Instantiates a new Init event.
      *
      * @param siteObserver the site observer
-     * @param config       the config
+     * @param coreConfig   the config
      * @param gitService   gitService
      */
-    public InitEvent(SiteObserver siteObserver, Config config, IGitService gitService) {
+    public InitEvent(SiteObserver siteObserver, CoreConfig coreConfig, IGitService gitService) {
         this.siteObserver = siteObserver;
-        this.config = config;
+        this.coreConfig = coreConfig;
         this.gitService = gitService;
     }
 
@@ -55,7 +55,7 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
 
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        Path repositoryPath = config.getRepositoryPath();
+        Path repositoryPath = coreConfig.getRepositoryPath();
         if (Files.notExists(repositoryPath)) {
             log.info("工作目录下没有git仓库 准备开始初始化");
             gitService.initRepository();
@@ -90,9 +90,12 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
             String fileName = article.getName() + ".md";
             if (Files.notExists(repositoryPath.resolve(fileName))) {
                 EXECUTOR_SERVICE.execute(() -> {
-                    FileUtil.write(repositoryPath.resolve(fileName), article.getMetaType().generateMetaAndContext(article));
-                    log.info("成功将站点文章写入到 {}", repositoryPath.resolve(fileName));
-                    countDownLatch.countDown();
+                    try {
+                        FileUtil.write(repositoryPath.resolve(fileName), article.getMetaType().generateMetaAndContext(article));
+                        log.info("成功将站点文章写入到 {}", repositoryPath.resolve(fileName));
+                    } finally {
+                        countDownLatch.countDown();
+                    }
                 });
                 continue;
             }
