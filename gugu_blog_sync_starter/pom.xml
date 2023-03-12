@@ -9,12 +9,17 @@
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>gugu_blog_sync_example</artifactId>
+    <artifactId>gugu_blog_sync_starter</artifactId>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.gugumin</groupId>
-            <artifactId>gugu_blog_sync_starter</artifactId>
+            <artifactId>gugu_blog_sync_core</artifactId>
             <version>${parent.version}</version>
         </dependency>
     </dependencies>
@@ -28,21 +33,6 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-                <configuration>
-                    <mainClass>org.example.Application</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

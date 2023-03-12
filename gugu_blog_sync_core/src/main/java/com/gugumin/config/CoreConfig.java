@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 @Setter
 @Configuration
 @ConfigurationProperties("core-config")
-public class Config {
+public class CoreConfig {
     private String workspace;
     private Proxy proxy;
     private Git git;
