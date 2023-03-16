@@ -28,7 +28,9 @@ public class SystemProxyUtil {
         System.setProperty("proxySet", "true");
         System.setProperty("socksProxyHost", host);
         System.setProperty("socksProxyPort", port);
-        System.setProperty("socksProxyVersion", version);
+        if (StringUtils.hasText(version)) {
+            System.setProperty("socksProxyVersion", version);
+        }
         if (StringUtils.hasText(username) && StringUtils.hasText(password)) {
             System.setProperty("java.net.socks.username", username);
             System.setProperty("java.net.socks.password", username);
