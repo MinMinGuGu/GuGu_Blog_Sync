@@ -1,5 +1,10 @@
 package com.gugumin.utils;
 
+import org.springframework.util.StringUtils;
+
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+
 /**
  * Java代理设置
  *
@@ -10,37 +15,41 @@ public class SystemProxyUtil {
     private SystemProxyUtil() {
     }
 
-
     /**
      * 设置代理端口
      *
-     * @param host host
-     * @param port 端口
+     * @param host     host
+     * @param port     端口
+     * @param version  the version
+     * @param username the username
+     * @param password the password
      */
-    public static void setHttpProxy(String host, int port) {
-        setHttpProxy(host, String.valueOf(port));
-    }
-
-    /**
-     * 设置代理端口
-     *
-     * @param host host
-     * @param port 端口
-     */
-    public static void setHttpProxy(String host, String port) {
-        System.setProperty("http.proxyHost", host);
-        System.setProperty("http.proxyPort", port);
-        System.setProperty("https.proxyHost", host);
-        System.setProperty("https.proxyPort", port);
+    public static void setHttpProxy(String host, String port, String version, String username, String password) {
+        System.setProperty("proxySet", "true");
+        System.setProperty("socksProxyHost", host);
+        System.setProperty("socksProxyPort", port);
+        System.setProperty("socksProxyVersion", version);
+        if (StringUtils.hasText(username) && StringUtils.hasText(password)) {
+            System.setProperty("java.net.socks.username", username);
+            System.setProperty("java.net.socks.password", username);
+            Authenticator.setDefault(new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(username, password.toCharArray());
+                }
+            });
+        }
     }
 
     /**
      * 移除代理
      */
     public static void removeHttpProxy() {
-        System.getProperties().remove("http.proxyHost");
-        System.getProperties().remove("http.proxyPort");
-        System.getProperties().remove("https.proxyHost");
-        System.getProperties().remove("https.proxyPort");
+        System.getProperties().remove("proxySet");
+        System.getProperties().remove("socksProxyHost");
+        System.getProperties().remove("socksProxyPort");
+        System.getProperties().remove("socksProxyVersion");
+        System.getProperties().remove("java.net.socks.username");
+        System.getProperties().remove("java.net.socks.password");
     }
 }

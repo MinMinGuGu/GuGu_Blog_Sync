@@ -38,7 +38,10 @@ public class CoreConfig {
     public static class Proxy {
         private boolean open;
         private String host;
-        private Integer port;
+        private String port;
+        private String version;
+        private String username;
+        private String password;
     }
 
     /**
