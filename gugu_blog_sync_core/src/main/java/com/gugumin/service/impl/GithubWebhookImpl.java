@@ -15,9 +15,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * The type Github webhook.
@@ -50,12 +49,12 @@ public class GithubWebhookImpl implements IGithubWebhook {
     public void handler(String payload) {
         log.debug("payload: {}", payload);
         Path repositoryPath = coreConfig.getRepositoryPath();
-        JSONArray removed = JsonPath.read(payload, "$.head_commit.removed");
+        JSONArray removed = JsonPath.read(payload, "$.commits..removed");
         siteObserver.postNotice(analyzeAndRead(repositoryPath, removed), SiteObserver.NoticeType.REMOVE_ARTICLE);
         gitService.updateRepository();
-        JSONArray added = JsonPath.read(payload, "$.head_commit.added");
+        JSONArray added = JsonPath.read(payload, "$.commits..added");
         siteObserver.postNotice(analyzeAndRead(repositoryPath, added), SiteObserver.NoticeType.ADD_ARTICLE);
-        JSONArray modified = JsonPath.read(payload, "$.head_commit.modified");
+        JSONArray modified = JsonPath.read(payload, "$.commits..modified");
         siteObserver.postNotice(analyzeAndRead(repositoryPath, modified), SiteObserver.NoticeType.UPDATE_ARTICLE);
     }
 
@@ -63,16 +62,29 @@ public class GithubWebhookImpl implements IGithubWebhook {
         if (CollectionUtils.isEmpty(jsonArray)) {
             return Collections.emptyList();
         }
-        return jsonArray.stream().map(obj -> {
-            String fileUri = obj.toString();
-            if (!fileUri.endsWith(MD_SUFFIX)) {
-                return null;
+        List<Article> articleList = new LinkedList<>();
+        for (Object o : jsonArray) {
+            if (o instanceof JSONArray) {
+                JSONArray arrayItem = (JSONArray) o;
+                analyzeFileName2Article(repositoryPath, arrayItem, articleList);
             }
-            Path filePath = repositoryPath.resolve(fileUri);
-            String title = fileUri.substring(fileUri.lastIndexOf("/") + 1).replace(MD_SUFFIX, "");
-            String context = FileUtil.read(filePath);
-            MetaType metaType = Article.parseMetaFromContext(context);
-            return metaType.parseMetaAndConvert(title, context);
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+        }
+        return articleList;
+    }
+
+    private void analyzeFileName2Article(Path repositoryPath, JSONArray arrayItem, List<Article> articleList) {
+        if (CollectionUtils.isEmpty(arrayItem)) {
+            return;
+        }
+        for (Object o1 : arrayItem) {
+            String fileUri = o1.toString();
+            if (fileUri.endsWith(MD_SUFFIX)) {
+                Path filePath = repositoryPath.resolve(fileUri);
+                String title = fileUri.substring(fileUri.lastIndexOf("/") + 1).replace(MD_SUFFIX, "");
+                String context = FileUtil.read(filePath);
+                MetaType metaType = Article.parseMetaFromContext(context);
+                articleList.add(metaType.parseMetaAndConvert(title, context));
+            }
+        }
     }
 }
