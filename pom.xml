@@ -12,14 +12,13 @@
     <developers>
         <developer>
             <name>minmin</name>
-            <url>https://github.com/GuGuMinMin</url>
+            <url>https://github.com/MinMinGuGu</url>
         </developer>
     </developers>
 
     <modules>
         <module>gugu_blog_sync_core</module>
         <module>gugu_blog_sync_common</module>
-        <module>gugu_blog_sync_example</module>
         <module>gugu_blog_sync_starter</module>
     </modules>
 
@@ -27,7 +26,6 @@
         <java.version>11</java.version>
         <spring-boot.version>2.7.9</spring-boot.version>
         <jgit.version>6.4.0.202211300538-r</jgit.version>
-        <forest.version>1.5.28</forest.version>
     </properties>
 
     <dependencyManagement>

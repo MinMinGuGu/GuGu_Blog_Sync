@@ -11,6 +11,17 @@
 
     <artifactId>gugu_blog_sync_starter</artifactId>
 
+    <developers>
+        <developer>
+            <name>minmin</name>
+            <url>https://github.com/MinMinGuGu</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/MinMinGuGu/GuGu_Blog_Sync</url>
+    </scm>
+
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
