@@ -1,16 +1,12 @@
-<div style="text-align:center">
-    <img src="https://img.shields.io/badge/Java-11-brightgreen"/>
-    <img src="https://img.shields.io/badge/GuGu__Blog__Sync-v0.0.1-green"/>
+<div align="center">
     <p>
-        基于Github仓库的Webhook实现的个人博客文章同步框架。
-    </p>
-    <p>
-        它会处理Markdown文件的变更操作，支持自定义处理初始化、新增、删除、修改实现。
-    </p>
-    <p>
-        现有的博客框架支持：<a target="_black" href="https://github.com/MinMinGuGu/GuGu_Blog_Sync_Halo">Halo - GuGu_Blog_Sync_Halo</a>
+        <img src="https://img.shields.io/badge/Java-11-brightgreen"/>
+        <img src="https://img.shields.io/badge/GuGu__Blog__Sync-v0.0.1-green"/>
     </p>
 </div>
+<p align="center">基于Github仓库的Webhook实现的个人博客文章同步框架。</p>
+<p align="center">它会处理Markdown文件的变更操作，支持自定义处理初始化、新增、删除、修改实现。</p>
+<p align="center">现有的博客框架支持：<a target="_black" href="https://github.com/MinMinGuGu/GuGu_Blog_Sync_Halo">Halo - GuGu_Blog_Sync_Halo</a></p>
 
 ## 特性
 
