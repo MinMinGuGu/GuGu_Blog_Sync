@@ -12,6 +12,17 @@
 
     <artifactId>gugu_blog_sync_core</artifactId>
 
+    <developers>
+        <developer>
+            <name>minmin</name>
+            <url>https://github.com/MinMinGuGu</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/MinMinGuGu/GuGu_Blog_Sync</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
