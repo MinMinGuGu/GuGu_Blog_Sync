@@ -5,6 +5,7 @@ import com.gugumin.config.CoreConfig;
 import com.gugumin.pojo.Article;
 import com.gugumin.service.IGitService;
 import com.gugumin.utils.FileUtil;
+import com.gugumin.utils.I18nUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -29,11 +30,20 @@ import java.util.concurrent.Executors;
 @Slf4j
 @Component
 public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
+    private static final String LOG_GIT_INIT_POST = "log_git_init_post";
+    private static final String LOG_GIT_INIT_DONE = "log_git_init_done";
+    private static final String LOG_SIT_ARTICLE_PULL = "log_site_article_pull";
+    private static final String LOG_SIT_ARTICLE_PULL_WRITE = "log_site_article_pull_write";
+    private static final String LOG_SIT_ARTICLE_PULL_DONE = "log_site_article_pull_done";
+    private static final String LOG_WATCH_WEBHOOK = "log_watch_webhook";
+
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool(r -> new Thread(r, "InitEvent-Task"));
     private static boolean initFlag = false;
     private final SiteObserver siteObserver;
     private final CoreConfig coreConfig;
     private final IGitService gitService;
+    private final I18nUtils i18nUtils;
+
 
     /**
      * Instantiates a new Init event.
@@ -41,11 +51,13 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
      * @param siteObserver the site observer
      * @param coreConfig   the config
      * @param gitService   gitService
+     * @param i18nUtils    i18nUtils
      */
-    public InitEvent(SiteObserver siteObserver, CoreConfig coreConfig, IGitService gitService) {
+    public InitEvent(SiteObserver siteObserver, CoreConfig coreConfig, IGitService gitService, I18nUtils i18nUtils) {
         this.siteObserver = siteObserver;
         this.coreConfig = coreConfig;
         this.gitService = gitService;
+        this.i18nUtils = i18nUtils;
     }
 
     @PreDestroy
@@ -57,12 +69,12 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
     public void onApplicationEvent(ApplicationStartedEvent event) {
         Path repositoryPath = coreConfig.getRepositoryPath();
         if (Files.notExists(repositoryPath)) {
-            log.info("工作目录下没有git仓库 准备开始初始化");
+            log.info(i18nUtils.getI18nMessage(LOG_GIT_INIT_POST));
             gitService.initRepository();
-            log.info("工作目录下git仓库初始化完成");
+            log.info(i18nUtils.getI18nMessage(LOG_GIT_INIT_DONE));
             tryPullSiteData2Repository(repositoryPath);
         }
-        log.info("应用初始化完毕 正在监听webhook");
+        log.info(i18nUtils.getI18nMessage(LOG_WATCH_WEBHOOK));
     }
 
     /**
@@ -84,7 +96,7 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
         if (CollectionUtils.isEmpty(articleList)) {
             return;
         }
-        log.info("尝试将站点文章拉取到本地仓库");
+        log.info(i18nUtils.getI18nMessage(LOG_SIT_ARTICLE_PULL));
         CountDownLatch countDownLatch = new CountDownLatch(articleList.size());
         for (Article article : articleList) {
             String fileName = article.getName() + ".md";
@@ -92,7 +104,7 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
                 EXECUTOR_SERVICE.execute(() -> {
                     try {
                         FileUtil.write(repositoryPath.resolve(fileName), article.getMetaType().generateMetaAndContext(article));
-                        log.info("成功将站点文章写入到 {}", repositoryPath.resolve(fileName));
+                        log.info(i18nUtils.getI18nMessage(LOG_SIT_ARTICLE_PULL_WRITE), repositoryPath.resolve(fileName));
                     } finally {
                         countDownLatch.countDown();
                     }
@@ -102,7 +114,7 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
             countDownLatch.countDown();
         }
         countDownLatch.await();
-        log.info("站点文章拉取到本地仓库完成");
+        log.info(i18nUtils.getI18nMessage(LOG_SIT_ARTICLE_PULL_DONE));
         gitService.pushRepository();
         initFlag = true;
     }
