@@ -8,7 +8,6 @@ import com.gugumin.utils.FileUtil;
 import com.gugumin.utils.I18nUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -43,9 +42,8 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
     private final SiteObserver siteObserver;
     private final CoreConfig coreConfig;
     private final IGitService gitService;
+    private final I18nUtils i18nUtils;
 
-    @Autowired
-    I18nUtils i18nUtils;
 
     /**
      * Instantiates a new Init event.
@@ -53,11 +51,13 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
      * @param siteObserver the site observer
      * @param coreConfig   the config
      * @param gitService   gitService
+     * @param i18nUtils    i18nUtils
      */
-    public InitEvent(SiteObserver siteObserver, CoreConfig coreConfig, IGitService gitService) {
+    public InitEvent(SiteObserver siteObserver, CoreConfig coreConfig, IGitService gitService, I18nUtils i18nUtils) {
         this.siteObserver = siteObserver;
         this.coreConfig = coreConfig;
         this.gitService = gitService;
+        this.i18nUtils = i18nUtils;
     }
 
     @PreDestroy

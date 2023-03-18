@@ -23,11 +23,11 @@ public class CommonConfig {
     @Value(value = "${core-config.i18n.name:i18n.messages}")
     private String messageBeanName;
 
-    public static String lang;
-
     @Value(value = "${core-config.i18n.lang:en_US}")
-    public void setLang(String lang) {
-        CommonConfig.lang = lang;
+    private String lang;
+
+    public String getLang() {
+        return this.lang;
     }
 
     @Bean

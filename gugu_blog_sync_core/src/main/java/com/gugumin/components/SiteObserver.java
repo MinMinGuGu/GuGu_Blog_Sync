@@ -5,7 +5,6 @@ import com.gugumin.service.core.ISite;
 import com.gugumin.utils.I18nUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -40,17 +39,17 @@ public class SiteObserver {
     private static final int DEFAULT_WAIT_THREAD_TIME = 10;
     private final List<ISite> siteList = new LinkedList<>();
     private final SpringHelper springHelper;
-
-    @Autowired
-    I18nUtils i18nUtils;
+    private final I18nUtils i18nUtils;
 
     /**
      * Instantiates a new Site observer.
      *
      * @param springHelper the spring helper
+     * @param i18nUtils
      */
-    public SiteObserver(SpringHelper springHelper) {
+    public SiteObserver(SpringHelper springHelper, I18nUtils i18nUtils) {
         this.springHelper = springHelper;
+        this.i18nUtils = i18nUtils;
     }
 
     /**
