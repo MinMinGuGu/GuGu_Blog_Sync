@@ -44,7 +44,7 @@
 </dependency>
 ```
 
-## 接入示例
+## 接入模板
 
 [GuGu_Blog_Sync_Example](https://github.com/MinMinGuGu/GuGu_Blog_Sync_Example)
 
