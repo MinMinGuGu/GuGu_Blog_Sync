@@ -25,13 +25,28 @@ public class I18nUtils {
     public String getI18nMessage(String code) {
         return getI18nMessage(code, new Object[] {});
     }
+
     public String getI18nMessage(String code, String defaultMsg) {
         return getI18nMessage(code, null, defaultMsg);
     }
+
     public String getI18nMessage(String code, Object[] params) {
         Locale locale = StringUtils.parseLocale(CommonConfig.lang);
         try {
             return messageSource.getMessage(code, params, locale);
+        } catch (NoSuchMessageException ex) {
+            LOGGER.warn("NoSuchMessageException:", ex);
+        }
+        return code;
+    }
+
+    public String getI18nMessageByLang(String code, String lang) {
+        return getI18nMessageByLocale(code, StringUtils.parseLocale(lang));
+    }
+
+    public String getI18nMessageByLocale(String code, Locale locale) {
+        try {
+            return messageSource.getMessage(code, new String[]{}, locale);
         } catch (NoSuchMessageException ex) {
             LOGGER.warn("NoSuchMessageException:", ex);
         }
