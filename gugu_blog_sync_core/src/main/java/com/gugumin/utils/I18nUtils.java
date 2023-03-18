@@ -1,13 +1,13 @@
 package com.gugumin.utils;
 
-import lombok.extern.slf4j.Slf4j;
+import com.gugumin.config.CommonConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Locale;
 
@@ -29,7 +29,7 @@ public class I18nUtils {
         return getI18nMessage(code, null, defaultMsg);
     }
     public String getI18nMessage(String code, Object[] params) {
-        Locale locale = LocaleContextHolder.getLocale();
+        Locale locale = StringUtils.parseLocale(CommonConfig.lang);
         try {
             return messageSource.getMessage(code, params, locale);
         } catch (NoSuchMessageException ex) {
@@ -39,7 +39,7 @@ public class I18nUtils {
     }
 
     public String getI18nMessage(String code, Object[] params, String defaultMsg) {
-        Locale locale = LocaleContextHolder.getLocale();
+        Locale locale = StringUtils.parseLocale(CommonConfig.lang);
         return messageSource.getMessage(code, params, defaultMsg, locale);
     }
 }

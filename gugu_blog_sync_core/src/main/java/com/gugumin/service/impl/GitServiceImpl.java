@@ -2,6 +2,7 @@ package com.gugumin.service.impl;
 
 import com.gugumin.config.CoreConfig;
 import com.gugumin.service.IGitService;
+import com.gugumin.utils.I18nUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
@@ -9,6 +10,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,7 +25,20 @@ import java.nio.file.Path;
 @Slf4j
 @Service
 public class GitServiceImpl implements IGitService {
+    private static final String LOG_GIT_CLONE_SUCCESS = "log_git_clone_success";
+    private static final String LOG_GIT_RELATION_SUCCESS = "log_git_relation_success";
+    private static final String LOG_GIT_INIT_FAILED = "log_git_init_failed";
+    private static final String LOG_GIT_COMMIT_MSG = "log_git_commit_msg";
+    private static final String LOG_GIT_PUSH_POST = "log_git_push_post";
+    private static final String LOG_GIT_PUSH_SUCCESS = "log_git_push_success";
+    private static final String LOG_GIT_PUSH_FAILED = "log_git_push_failed";
+    private static final String LOG_GIT_PULL_SUCCESS = "log_git_pull_success";
+    private static final String LOG_GIT_PULL_FAILED = "log_git_pull_failed";
+
     private final CoreConfig coreConfig;
+
+    @Autowired
+    I18nUtils i18nUtils;
 
     /**
      * Instantiates a new Git service.
@@ -43,7 +58,7 @@ public class GitServiceImpl implements IGitService {
                     .setDirectory(repositoryPath.toFile());
             cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(coreConfig.getGit().getUsername(), coreConfig.getGit().getToken()));
             cloneCommand.call().close();
-            log.info("克隆git仓库成功");
+            log.info(i18nUtils.getI18nMessage(LOG_GIT_CLONE_SUCCESS));
             Git open = Git.open(repositoryPath.toFile());
             open.checkout()
                     .setName("main")
@@ -51,29 +66,26 @@ public class GitServiceImpl implements IGitService {
                     .setStartPoint("origin/main")
                     .call();
             open.close();
-            log.info("本地分支已经关联远端分支");
+            log.info(i18nUtils.getI18nMessage(LOG_GIT_RELATION_SUCCESS));
         } catch (GitAPIException | IOException e) {
-            log.error("初始化git仓库时失败");
+            log.error(i18nUtils.getI18nMessage(LOG_GIT_INIT_FAILED));
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public void pushRepository() {
-        log.info("准备开始将本地仓库同步到git远程仓库");
+        log.info(i18nUtils.getI18nMessage(LOG_GIT_PUSH_POST));
         Path repositoryPath = coreConfig.getRepositoryPath();
         try {
             Git open = Git.open(repositoryPath.toFile());
             open.add().addFilepattern(".").call();
-            open.commit().setMessage("提交站点文章").call();
-            open.push()
-                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(coreConfig.getGit().getUsername(), coreConfig.getGit().getToken()))
-                    .setPushAll()
-                    .call();
+            open.commit().setMessage(i18nUtils.getI18nMessage(LOG_GIT_COMMIT_MSG)).call();
+            open.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(coreConfig.getGit().getUsername(), coreConfig.getGit().getToken())).setPushAll().call();
             open.close();
-            log.info("成功将本地仓库同步到git远程仓库");
+            log.info(i18nUtils.getI18nMessage(LOG_GIT_PUSH_SUCCESS));
         } catch (IOException | GitAPIException e) {
-            log.error("将站点文章同步到git远程仓库出错");
+            log.error(i18nUtils.getI18nMessage(LOG_GIT_PUSH_FAILED));
             throw new RuntimeException(e);
         }
     }
@@ -86,9 +98,9 @@ public class GitServiceImpl implements IGitService {
                     .setRemote("origin");
             pullCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(coreConfig.getGit().getUsername(), coreConfig.getGit().getToken()));
             pullCommand.call();
-            log.info("更新本地分支成功");
+            log.info(i18nUtils.getI18nMessage(LOG_GIT_PULL_SUCCESS));
         } catch (Exception e) {
-            log.error("更新git仓库失败");
+            log.error(i18nUtils.getI18nMessage(LOG_GIT_PULL_FAILED));
             throw new RuntimeException(e);
         }
     }

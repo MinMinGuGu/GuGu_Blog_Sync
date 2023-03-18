@@ -2,7 +2,6 @@ package com.gugumin.event;
 
 import com.gugumin.components.SiteObserver;
 import com.gugumin.config.CoreConfig;
-import com.gugumin.config.I18nConstans;
 import com.gugumin.pojo.Article;
 import com.gugumin.service.IGitService;
 import com.gugumin.utils.FileUtil;
@@ -32,6 +31,13 @@ import java.util.concurrent.Executors;
 @Slf4j
 @Component
 public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
+    private static final String LOG_GIT_INIT_POST = "log_git_init_post";
+    private static final String LOG_GIT_INIT_DONE = "log_git_init_done";
+    private static final String LOG_SIT_ARTICLE_PULL = "log_site_article_pull";
+    private static final String LOG_SIT_ARTICLE_PULL_WRITE = "log_site_article_pull_write";
+    private static final String LOG_SIT_ARTICLE_PULL_DONE = "log_site_article_pull_done";
+    private static final String LOG_WATCH_WEBHOOK = "log_watch_webhook";
+
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool(r -> new Thread(r, "InitEvent-Task"));
     private static boolean initFlag = false;
     private final SiteObserver siteObserver;
@@ -63,12 +69,12 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
     public void onApplicationEvent(ApplicationStartedEvent event) {
         Path repositoryPath = coreConfig.getRepositoryPath();
         if (Files.notExists(repositoryPath)) {
-            log.info(i18nUtils.getI18nMessage(I18nConstans.LOG_GIT_INIT_POST));
+            log.info(i18nUtils.getI18nMessage(LOG_GIT_INIT_POST));
             gitService.initRepository();
-            log.info(i18nUtils.getI18nMessage(I18nConstans.LOG_GIT_INIT_DONE));
+            log.info(i18nUtils.getI18nMessage(LOG_GIT_INIT_DONE));
             tryPullSiteData2Repository(repositoryPath);
         }
-        log.info(i18nUtils.getI18nMessage(I18nConstans.LOG_WATCH_WEBHOOK));
+        log.info(i18nUtils.getI18nMessage(LOG_WATCH_WEBHOOK));
     }
 
     /**
@@ -90,7 +96,7 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
         if (CollectionUtils.isEmpty(articleList)) {
             return;
         }
-        log.info(i18nUtils.getI18nMessage(I18nConstans.LOG_SIT_ARTICLE_PULL));
+        log.info(i18nUtils.getI18nMessage(LOG_SIT_ARTICLE_PULL));
         CountDownLatch countDownLatch = new CountDownLatch(articleList.size());
         for (Article article : articleList) {
             String fileName = article.getName() + ".md";
@@ -98,7 +104,7 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
                 EXECUTOR_SERVICE.execute(() -> {
                     try {
                         FileUtil.write(repositoryPath.resolve(fileName), article.getMetaType().generateMetaAndContext(article));
-                        log.info(i18nUtils.getI18nMessage(I18nConstans.LOG_SIT_ARTICLE_PULL_WRITE), repositoryPath.resolve(fileName));
+                        log.info(i18nUtils.getI18nMessage(LOG_SIT_ARTICLE_PULL_WRITE), repositoryPath.resolve(fileName));
                     } finally {
                         countDownLatch.countDown();
                     }
@@ -108,7 +114,7 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
             countDownLatch.countDown();
         }
         countDownLatch.await();
-        log.info(i18nUtils.getI18nMessage(I18nConstans.LOG_SIT_ARTICLE_PULL_DONE));
+        log.info(i18nUtils.getI18nMessage(LOG_SIT_ARTICLE_PULL_DONE));
         gitService.pushRepository();
         initFlag = true;
     }

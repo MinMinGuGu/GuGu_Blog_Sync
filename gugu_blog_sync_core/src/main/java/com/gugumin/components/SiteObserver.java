@@ -2,8 +2,10 @@ package com.gugumin.components;
 
 import com.gugumin.pojo.Article;
 import com.gugumin.service.core.ISite;
+import com.gugumin.utils.I18nUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -28,10 +30,19 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Lazy
 public class SiteObserver {
+    private static final String LOG_LOAD_DONE = "log_load_done";
+    private static final String LOG_STOP_THREADPOOL = "log_stop_threadpool";
+    private static final String LOG_STOP_THREADPOOL_EXCE = "log_stop_threadpool_exce";
+    private static final String LOG_STOP_THREADPOOL_DONE = "log_stop_threadpool_done";
+    private static final String LOG_METHOD_EXCE = "log_method_exec";
+
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool((r) -> new Thread(r, "siteObs-Task"));
     private static final int DEFAULT_WAIT_THREAD_TIME = 10;
     private final List<ISite> siteList = new LinkedList<>();
     private final SpringHelper springHelper;
+
+    @Autowired
+    I18nUtils i18nUtils;
 
     /**
      * Instantiates a new Site observer.
@@ -50,23 +61,24 @@ public class SiteObserver {
         Map<String, ISite> iSiteMap = springHelper.getApplicationContext().getBeansOfType(ISite.class);
         iSiteMap.forEach((key, value) -> {
             siteList.add(value);
-            log.info("加载 {} 完成", value.getClass().getName());
+            log.info(i18nUtils.getI18nMessage(LOG_LOAD_DONE), value.getClass().getName());
         });
     }
 
     @PreDestroy
     public void closer() {
-        log.info("正在停止 SiteObserver 通知调用线程池");
+        String threaPoolName = "SiteObserver";
+        log.info(i18nUtils.getI18nMessage(LOG_STOP_THREADPOOL), threaPoolName);
         EXECUTOR_SERVICE.shutdown();
         try {
             if (!EXECUTOR_SERVICE.awaitTermination(DEFAULT_WAIT_THREAD_TIME, TimeUnit.SECONDS)) {
                 EXECUTOR_SERVICE.shutdownNow();
             }
         } catch (InterruptedException e) {
-            log.info("SiteObserver 线程池无法正常关闭");
+            log.info(i18nUtils.getI18nMessage(LOG_STOP_THREADPOOL_EXCE), threaPoolName);
             throw new RuntimeException(e);
         }
-        log.info("SiteObserver 线程池已经关闭");
+        log.info(i18nUtils.getI18nMessage(LOG_STOP_THREADPOOL_DONE), threaPoolName);
     }
 
     /**
@@ -87,7 +99,7 @@ public class SiteObserver {
                     try {
                         item.addArticle(articleList);
                     } catch (Exception e) {
-                        log.error("执行 {} 的addArticle方法时 它抛出了异常", item.getClass().getName(), e);
+                        log.error(i18nUtils.getI18nMessage(LOG_METHOD_EXCE), "addArticle", item.getClass().getName(), e);
                     }
                 }));
                 return Collections.emptyList();
@@ -97,7 +109,7 @@ public class SiteObserver {
                     try {
                         item.removeArticle(articleList);
                     } catch (Exception e) {
-                        log.error("执行 {} 的removeArticle方法时 它抛出了异常", item.getClass().getName(), e);
+                        log.error(i18nUtils.getI18nMessage(LOG_METHOD_EXCE), "removeArticle", item.getClass().getName(), e);
                     }
                 }));
                 return Collections.emptyList();
@@ -107,7 +119,7 @@ public class SiteObserver {
                     try {
                         item.updateArticle(articleList);
                     } catch (Exception e) {
-                        log.error("执行 {} 的updateArticle方法时 它抛出了异常", item.getClass().getName(), e);
+                        log.error(i18nUtils.getI18nMessage(LOG_METHOD_EXCE), "updateArticle", item.getClass().getName(), e);
                     }
                 }));
                 return Collections.emptyList();
