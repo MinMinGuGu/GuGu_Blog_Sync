@@ -24,7 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     private static class GithubInterceptors implements HandlerInterceptor {
-        private static final String URI_PATTERN = "/github/**";
+        private static final String URI_PATTERN = "/github/webhook";
         private static final String HEAD_USERAGENT = "User-Agent";
         private static final String HEAD_X_GITHUB_EVENT = "X-GitHub-Event";
         private static final String DEFAULT_USERAGENT = "GitHub-Hookshot";
