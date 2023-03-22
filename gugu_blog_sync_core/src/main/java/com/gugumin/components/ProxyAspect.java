@@ -42,7 +42,7 @@ public class ProxyAspect {
     @Around("git()")
     public Object proxy(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         CoreConfig.Proxy configProxy = coreConfig.getProxy();
-        if (configProxy != null && configProxy.getOpen()) {
+        if (configProxy != null && Boolean.TRUE.equals(configProxy.getOpen())) {
             SystemProxyUtil.setHttpProxy(configProxy.getHost(), configProxy.getPort(), configProxy.getVersion(), configProxy.getUsername(), configProxy.getPassword());
             Object proceed = proceedingJoinPoint.proceed();
             SystemProxyUtil.removeHttpProxy();

@@ -2,16 +2,17 @@ package com.gugumin.config;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.eclipse.jgit.util.StringUtils;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -41,17 +42,32 @@ public class CoreConfig {
         return Paths.get(workspace, projectName);
     }
 
+    @ConditionalOnBean(Proxy.class)
+    @Bean
+    public void ProxydeployCheckout() {
+        if (Boolean.TRUE.equals(proxy.getOpen())) {
+            if (StringUtils.isEmptyOrNull(proxy.getHost()) || StringUtils.isEmptyOrNull(proxy.getPort())) {
+                throw new RuntimeException("Proxy配置未填写完全");
+            }
+        }
+    }
 
+    @ConditionalOnBean(Git.class)
+    @Bean
+    public void GitdeployCheckout() {
+        if (Boolean.TRUE.equals(proxy.getOpen())) {
+            if (StringUtils.isEmptyOrNull(git.getUsername()) || StringUtils.isEmptyOrNull(git.getToken())||StringUtils.isEmptyOrNull(git.getRepository())) {
+                throw new RuntimeException("Git配置未填写完全");
+            }
+        }
+    }
 
     @Getter
     @Setter
     public static class Proxy {
 
-        @NotNull(message = "这里是open")
         private Boolean open;
-        @Pattern(regexp = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b")
         private String host;
-        @Range(message = "端口为 {min} 到 {max} 之间", min = 0, max = 65535)
         private String port;
         private String version;
         private String username;
@@ -65,11 +81,11 @@ public class CoreConfig {
     @Getter
     @Setter
     public static class Git {
-        @NotBlank(message = "git username不能为空")
+
         private String username;
-        @NotBlank(message = "git token不能为空")
+
         private String token;
-        @NotBlank(message = "git repository不能为空")
+
         private String repository;
     }
 }
