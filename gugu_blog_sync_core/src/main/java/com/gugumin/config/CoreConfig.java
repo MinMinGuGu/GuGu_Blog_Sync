@@ -21,7 +21,6 @@ import java.nio.file.Paths;
 @Getter
 @Setter
 @Configuration
-@Validated
 @ConfigurationProperties("core-config")
 public class CoreConfig {
     private String workspace;
