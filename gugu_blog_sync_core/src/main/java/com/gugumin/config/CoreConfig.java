@@ -2,9 +2,12 @@ package com.gugumin.config;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.eclipse.jgit.util.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+
+import javax.annotation.PostConstruct;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -33,15 +36,31 @@ public class CoreConfig {
         return Paths.get(workspace, projectName);
     }
 
+
+    @PostConstruct
+    public void init() {
+        if (Boolean.TRUE.equals(proxy.getOpen())) {
+            if (StringUtils.isEmptyOrNull(proxy.getHost()) || StringUtils.isEmptyOrNull(proxy.getPort())) {
+                throw new RuntimeException("Proxy配置未填写完全");
+            }
+        }
+        if (StringUtils.isEmptyOrNull(git.getUsername()) || StringUtils.isEmptyOrNull(git.getToken()) || StringUtils.isEmptyOrNull(git.getRepository())) {
+            throw new RuntimeException("Git配置未填写完全");
+        }
+    }
+
+
     @Getter
     @Setter
     public static class Proxy {
-        private boolean open;
+
+        private Boolean open;
         private String host;
         private String port;
         private String version;
         private String username;
         private String password;
+
     }
 
     /**
@@ -50,8 +69,11 @@ public class CoreConfig {
     @Getter
     @Setter
     public static class Git {
+
         private String username;
+
         private String token;
+
         private String repository;
     }
 }
