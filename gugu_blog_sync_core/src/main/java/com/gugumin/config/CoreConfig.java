@@ -3,16 +3,12 @@ package com.gugumin.config;
 import lombok.Getter;
 import lombok.Setter;
 import org.eclipse.jgit.util.StringUtils;
-import org.hibernate.validator.constraints.Range;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
 
-import javax.validation.constraints.NotBlank;
+import javax.annotation.PostConstruct;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -42,25 +38,19 @@ public class CoreConfig {
         return Paths.get(workspace, projectName);
     }
 
-    @ConditionalOnBean(Proxy.class)
-    @Bean
-    public void ProxydeployCheckout() {
+
+    @PostConstruct
+    public void init() {
         if (Boolean.TRUE.equals(proxy.getOpen())) {
             if (StringUtils.isEmptyOrNull(proxy.getHost()) || StringUtils.isEmptyOrNull(proxy.getPort())) {
                 throw new RuntimeException("Proxy配置未填写完全");
             }
         }
-    }
-
-    @ConditionalOnBean(Git.class)
-    @Bean
-    public void GitdeployCheckout() {
-        if (Boolean.TRUE.equals(proxy.getOpen())) {
-            if (StringUtils.isEmptyOrNull(git.getUsername()) || StringUtils.isEmptyOrNull(git.getToken())||StringUtils.isEmptyOrNull(git.getRepository())) {
-                throw new RuntimeException("Git配置未填写完全");
-            }
+        if (StringUtils.isEmptyOrNull(git.getUsername()) || StringUtils.isEmptyOrNull(git.getToken()) || StringUtils.isEmptyOrNull(git.getRepository())) {
+            throw new RuntimeException("Git配置未填写完全");
         }
     }
+
 
     @Getter
     @Setter
