@@ -2,10 +2,9 @@ package com.gugumin.config;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.eclipse.jgit.util.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.nio.file.Path;
@@ -26,6 +25,28 @@ public class CoreConfig {
     private Proxy proxy;
     private Git git;
 
+    @PostConstruct
+    private void init() {
+        checkProxyConfig();
+        checkGitConfig();
+    }
+
+    private void checkGitConfig() {
+        if (StringUtils.hasText(git.getToken()) && StringUtils.hasText(git.getUsername()) && StringUtils.hasText(git.getRepository())) {
+            return;
+        }
+        throw new RuntimeException("Git配置是必须的");
+    }
+
+    private void checkProxyConfig() {
+        if (Boolean.TRUE.equals(proxy.getOpen())) {
+            if (StringUtils.hasText(proxy.getHost()) && StringUtils.hasText(proxy.getPort())) {
+                return;
+            }
+            throw new RuntimeException("Proxy配置需要host和port参数");
+        }
+    }
+
     /**
      * Gets repository path.
      *
@@ -34,19 +55,6 @@ public class CoreConfig {
     public Path getRepositoryPath() {
         String projectName = git.repository.substring(git.repository.lastIndexOf("/") + 1).replace(".git", "");
         return Paths.get(workspace, projectName);
-    }
-
-
-    @PostConstruct
-    public void init() {
-        if (Boolean.TRUE.equals(proxy.getOpen())) {
-            if (StringUtils.isEmptyOrNull(proxy.getHost()) || StringUtils.isEmptyOrNull(proxy.getPort())) {
-                throw new RuntimeException("Proxy配置未填写完全");
-            }
-        }
-        if (StringUtils.isEmptyOrNull(git.getUsername()) || StringUtils.isEmptyOrNull(git.getToken()) || StringUtils.isEmptyOrNull(git.getRepository())) {
-            throw new RuntimeException("Git配置未填写完全");
-        }
     }
 
 
