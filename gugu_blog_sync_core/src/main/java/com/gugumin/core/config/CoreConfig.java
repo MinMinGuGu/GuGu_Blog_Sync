@@ -1,5 +1,6 @@
 package com.gugumin.core.config;
 
+import com.gugumin.core.components.I18nHelper;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,9 +22,16 @@ import java.nio.file.Paths;
 @Configuration
 @ConfigurationProperties("core-config")
 public class CoreConfig {
+    private static final String LOG_GIT_CONFIG_REQUIRED = "log_git_config_required";
+    private static final String LOG_PROXY_HOST_PORT_REQUIRED = "log_proxy_host_port_required";
+    private final I18nHelper i18nHelper;
     private String workspace;
     private Proxy proxy;
     private Git git;
+
+    public CoreConfig(I18nHelper i18nHelper) {
+        this.i18nHelper = i18nHelper;
+    }
 
     @PostConstruct
     private void init() {
@@ -35,7 +43,7 @@ public class CoreConfig {
         if (StringUtils.hasText(git.getToken()) && StringUtils.hasText(git.getUsername()) && StringUtils.hasText(git.getRepository())) {
             return;
         }
-        throw new RuntimeException("Git配置是必须的");
+        throw new RuntimeException(i18nHelper.getI18nMessage(LOG_GIT_CONFIG_REQUIRED));
     }
 
     private void checkProxyConfig() {
@@ -43,7 +51,7 @@ public class CoreConfig {
             if (StringUtils.hasText(proxy.getHost()) && StringUtils.hasText(proxy.getPort())) {
                 return;
             }
-            throw new RuntimeException("Proxy配置需要host和port参数");
+            throw new RuntimeException(i18nHelper.getI18nMessage(LOG_PROXY_HOST_PORT_REQUIRED));
         }
     }
 
