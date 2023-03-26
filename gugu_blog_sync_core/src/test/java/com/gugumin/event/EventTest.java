@@ -1,6 +1,7 @@
 package com.gugumin.event;
 
 import com.gugumin.CoreTest;
+import com.gugumin.core.event.AddArticleEvent;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 

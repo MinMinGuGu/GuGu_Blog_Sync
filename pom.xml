@@ -18,7 +18,6 @@
 
     <modules>
         <module>gugu_blog_sync_core</module>
-        <module>gugu_blog_sync_common</module>
         <module>gugu_blog_sync_starter</module>
     </modules>
 
