@@ -1,7 +1,7 @@
 package com.gugumin.event.listener;
 
-import com.gugumin.event.AddArticleEvent;
-import com.gugumin.pojo.Article;
+import com.gugumin.core.event.AddArticleEvent;
+import com.gugumin.core.pojo.Article;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
