@@ -12,6 +12,5 @@ import org.junit.jupiter.api.Test;
 public class CoreConfigTest extends CoreTest {
     @Test
     public void test(){
-
     }
 }

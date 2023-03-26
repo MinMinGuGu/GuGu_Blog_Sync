@@ -1,7 +1,9 @@
 package com.gugumin.service.impl;
 
-import com.gugumin.components.SiteObserver;
 import com.gugumin.config.CoreConfig;
+import com.gugumin.event.AddArticleEvent;
+import com.gugumin.event.DeleteArticleEvent;
+import com.gugumin.event.UpdateArticleEvent;
 import com.gugumin.pojo.Article;
 import com.gugumin.pojo.MetaType;
 import com.gugumin.service.IGitService;
@@ -10,6 +12,7 @@ import com.gugumin.utils.FileUtil;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -28,21 +31,21 @@ import java.util.List;
 @Service
 public class GithubWebhookImpl implements IGithubWebhook {
     private static final String MD_SUFFIX = ".md";
-    private final SiteObserver siteObserver;
     private final CoreConfig coreConfig;
     private final IGitService gitService;
+    private final ApplicationEventPublisher publisher;
 
     /**
      * Instantiates a new Github webhook.
      *
-     * @param siteObserver the site observer
-     * @param coreConfig   the config
-     * @param gitService   gitService
+     * @param coreConfig the config
+     * @param gitService gitService
+     * @param publisher  the publisher
      */
-    public GithubWebhookImpl(SiteObserver siteObserver, CoreConfig coreConfig, IGitService gitService) {
-        this.siteObserver = siteObserver;
+    public GithubWebhookImpl(CoreConfig coreConfig, IGitService gitService, ApplicationEventPublisher publisher) {
         this.coreConfig = coreConfig;
         this.gitService = gitService;
+        this.publisher = publisher;
     }
 
     @Override
@@ -50,12 +53,12 @@ public class GithubWebhookImpl implements IGithubWebhook {
         log.debug("payload: {}", payload);
         Path repositoryPath = coreConfig.getRepositoryPath();
         JSONArray removed = JsonPath.read(payload, "$.commits..removed");
-        siteObserver.postNotice(analyzeAndRead(repositoryPath, removed), SiteObserver.NoticeType.REMOVE_ARTICLE);
+        publisher.publishEvent(new DeleteArticleEvent(this, analyzeAndRead(repositoryPath, removed)));
         gitService.updateRepository();
         JSONArray added = JsonPath.read(payload, "$.commits..added");
-        siteObserver.postNotice(analyzeAndRead(repositoryPath, added), SiteObserver.NoticeType.ADD_ARTICLE);
+        publisher.publishEvent(new AddArticleEvent(this, analyzeAndRead(repositoryPath, added)));
         JSONArray modified = JsonPath.read(payload, "$.commits..modified");
-        siteObserver.postNotice(analyzeAndRead(repositoryPath, modified), SiteObserver.NoticeType.UPDATE_ARTICLE);
+        publisher.publishEvent(new UpdateArticleEvent(this, analyzeAndRead(repositoryPath, modified)));
     }
 
     private List<Article> analyzeAndRead(Path repositoryPath, JSONArray jsonArray) {

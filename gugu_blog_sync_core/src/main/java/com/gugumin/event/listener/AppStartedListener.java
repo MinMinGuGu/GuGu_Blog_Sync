@@ -1,22 +1,25 @@
-package com.gugumin.event;
+package com.gugumin.event.listener;
 
-import com.gugumin.components.SiteObserver;
+import com.gugumin.components.SpringHelper;
 import com.gugumin.config.CoreConfig;
 import com.gugumin.pojo.Article;
 import com.gugumin.service.IGitService;
+import com.gugumin.service.IHandlerInitSite;
 import com.gugumin.utils.FileUtil;
 import com.gugumin.utils.I18nUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PreDestroy;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,7 +32,7 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 @Component
-public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
+public class AppStartedListener {
     private static final String LOG_GIT_INIT_POST = "log_git_init_post";
     private static final String LOG_GIT_INIT_DONE = "log_git_init_done";
     private static final String LOG_SIT_ARTICLE_PULL = "log_site_article_pull";
@@ -39,7 +42,7 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool(r -> new Thread(r, "InitEvent-Task"));
     private static boolean initFlag = false;
-    private final SiteObserver siteObserver;
+    private final SpringHelper springHelper;
     private final CoreConfig coreConfig;
     private final IGitService gitService;
     private final I18nUtils i18nUtils;
@@ -48,13 +51,13 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
     /**
      * Instantiates a new Init event.
      *
-     * @param siteObserver the site observer
+     * @param springHelper the spring helper
      * @param coreConfig   the config
      * @param gitService   gitService
      * @param i18nUtils    i18nUtils
      */
-    public InitEvent(SiteObserver siteObserver, CoreConfig coreConfig, IGitService gitService, I18nUtils i18nUtils) {
-        this.siteObserver = siteObserver;
+    public AppStartedListener(SpringHelper springHelper, CoreConfig coreConfig, IGitService gitService, I18nUtils i18nUtils) {
+        this.springHelper = springHelper;
         this.coreConfig = coreConfig;
         this.gitService = gitService;
         this.i18nUtils = i18nUtils;
@@ -65,8 +68,11 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
         EXECUTOR_SERVICE.shutdownNow();
     }
 
-    @Override
-    public void onApplicationEvent(ApplicationStartedEvent event) {
+    /**
+     * On application event.
+     */
+    @EventListener(ApplicationStartedEvent.class)
+    public void onApplicationEvent() {
         Path repositoryPath = coreConfig.getRepositoryPath();
         if (Files.notExists(repositoryPath)) {
             log.info(i18nUtils.getI18nMessage(LOG_GIT_INIT_POST));
@@ -92,7 +98,7 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
 
     @SneakyThrows
     private void tryPullSiteData2Repository(Path repositoryPath) {
-        List<Article> articleList = siteObserver.postNotice(null, SiteObserver.NoticeType.GET_ARTICLE);
+        List<Article> articleList = getSiteArticleList();
         if (CollectionUtils.isEmpty(articleList)) {
             return;
         }
@@ -117,5 +123,15 @@ public class InitEvent implements ApplicationListener<ApplicationStartedEvent> {
         log.info(i18nUtils.getI18nMessage(LOG_SIT_ARTICLE_PULL_DONE));
         gitService.pushRepository();
         initFlag = true;
+    }
+
+    private List<Article> getSiteArticleList() {
+        List<Article> articles = new LinkedList<>();
+        Map<String, IHandlerInitSite> iHandlerInitSiteMap = springHelper.getApplicationContext().getBeansOfType(IHandlerInitSite.class);
+        for (Map.Entry<String, IHandlerInitSite> siteEntry : iHandlerInitSiteMap.entrySet()) {
+            IHandlerInitSite site = siteEntry.getValue();
+            articles.addAll(site.getArticles());
+        }
+        return articles;
     }
 }
