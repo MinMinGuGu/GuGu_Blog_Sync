@@ -17,7 +17,7 @@ public abstract class BaseArticleEvent extends ApplicationEvent {
      * The Article list.
      */
     @Getter
-    protected final List<com.gugumin.core.pojo.Article> articleList;
+    protected final List<Article> articleList;
 
     /**
      * Instantiates a new Abs article event.

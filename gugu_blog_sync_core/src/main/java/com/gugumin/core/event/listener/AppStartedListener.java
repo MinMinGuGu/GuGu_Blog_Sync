@@ -98,13 +98,13 @@ public class AppStartedListener {
 
     @SneakyThrows
     private void tryPullSiteData2Repository(Path repositoryPath) {
-        List<com.gugumin.core.pojo.Article> articleList = getSiteArticleList();
+        List<Article> articleList = getSiteArticleList();
         if (CollectionUtils.isEmpty(articleList)) {
             return;
         }
         log.info(i18nHelper.getI18nMessage(LOG_SIT_ARTICLE_PULL));
         CountDownLatch countDownLatch = new CountDownLatch(articleList.size());
-        for (com.gugumin.core.pojo.Article article : articleList) {
+        for (Article article : articleList) {
             String fileName = article.getName() + ".md";
             if (Files.notExists(repositoryPath.resolve(fileName))) {
                 EXECUTOR_SERVICE.execute(() -> {
@@ -125,7 +125,7 @@ public class AppStartedListener {
         initFlag = true;
     }
 
-    private List<com.gugumin.core.pojo.Article> getSiteArticleList() {
+    private List<Article> getSiteArticleList() {
         List<Article> articles = new LinkedList<>();
         Map<String, IHandlerInitSite> iHandlerInitSiteMap = springHelper.getApplicationContext().getBeansOfType(IHandlerInitSite.class);
         for (Map.Entry<String, IHandlerInitSite> siteEntry : iHandlerInitSiteMap.entrySet()) {

@@ -19,7 +19,7 @@ public class Article {
     private String name;
     private String context;
     private Meta meta;
-    private com.gugumin.core.pojo.MetaType metaType;
+    private MetaType metaType;
 
     /**
      * Parse meta from context com . gugumin . core . pojo . meta type.
@@ -27,12 +27,12 @@ public class Article {
      * @param context the context
      * @return the com . gugumin . core . pojo . meta type
      */
-    public static com.gugumin.core.pojo.MetaType parseMetaFromContext(String context) {
+    public static MetaType parseMetaFromContext(String context) {
         Matcher matcher = META_PATTERN.matcher(context);
         if (matcher.find()) {
             String group = matcher.group();
             String metaTypeString = group.substring(group.indexOf("-") + 1);
-            for (com.gugumin.core.pojo.MetaType metaType : MetaType.values()) {
+            for (MetaType metaType : MetaType.values()) {
                 if (metaType.getValue().equalsIgnoreCase(metaTypeString)) {
                     return metaType;
                 }
