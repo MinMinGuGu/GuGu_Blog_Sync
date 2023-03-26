@@ -38,6 +38,6 @@ public class Article {
                 }
             }
         }
-        throw new RuntimeException("无法获取到context中的meta格式");
+        throw new RuntimeException("Unable to get the meta format in the context");
     }
 }

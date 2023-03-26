@@ -67,7 +67,7 @@ public enum MetaType {
                 break;
             }
             default: {
-                throw new RuntimeException("没有适配的MetaType");
+                throw new RuntimeException("No matching Meta Type");
             }
         }
         return new Article(title, contextWithoutMeta, meta, this);
@@ -102,7 +102,7 @@ public enum MetaType {
                 break;
             }
             default: {
-                throw new RuntimeException("没有适配的MetaType");
+                throw new RuntimeException("No matching Meta Type");
             }
         }
         result.append(context).append(System.lineSeparator());
