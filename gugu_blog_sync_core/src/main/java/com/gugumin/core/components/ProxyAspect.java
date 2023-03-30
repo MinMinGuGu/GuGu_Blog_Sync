@@ -46,9 +46,9 @@ public class ProxyAspect {
     public Object proxy(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         CoreConfig.Proxy configProxy = coreConfig.getProxy();
         if (Boolean.TRUE.equals(configProxy.getOpen())) {
-            SystemProxyUtil.setHttpProxy(configProxy.getHost(), configProxy.getPort(), configProxy.getVersion(), configProxy.getUsername(), configProxy.getPassword());
+            SystemProxyUtil.setProxy(configProxy.getHost(), configProxy.getPort(), configProxy.getVersion(), configProxy.getUsername(), configProxy.getPassword());
             Object proceed = proceedingJoinPoint.proceed();
-            SystemProxyUtil.removeHttpProxy();
+            SystemProxyUtil.removeProxy();
             return proceed;
         }
         return proceedingJoinPoint.proceed();

@@ -24,7 +24,7 @@ public class SystemProxyUtil {
      * @param username the username
      * @param password the password
      */
-    public static void setHttpProxy(String host, String port, String version, String username, String password) {
+    public static void setProxy(String host, String port, String version, String username, String password) {
         System.setProperty("socksProxyHost", host);
         System.setProperty("socksProxyPort", port);
         if (StringUtils.hasText(version)) {
@@ -45,7 +45,7 @@ public class SystemProxyUtil {
     /**
      * 移除代理
      */
-    public static void removeHttpProxy() {
+    public static void removeProxy() {
         System.getProperties().remove("socksProxyHost");
         System.getProperties().remove("socksProxyPort");
         System.getProperties().remove("socksProxyVersion");
