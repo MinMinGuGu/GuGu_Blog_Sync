@@ -6,7 +6,7 @@ package com.gugumin.core.service;
  * @author minmin
  * @date 2023 /03/08
  */
-public interface IGithubWebhook {
+public interface IHandlerWebhook {
     /**
      * Handler.
      *
