@@ -1,6 +1,6 @@
 package com.gugumin.core.components;
 
-import com.gugumin.core.config.CommonConfig;
+import com.gugumin.core.config.I18nConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
@@ -19,17 +19,17 @@ import java.util.Locale;
 @Component
 public class I18nHelper {
     private final MessageSource messageSource;
-    private final CommonConfig commonConfig;
+    private final I18nConfig i18nConfig;
 
     /**
      * Instantiates a new 18 n helper.
      *
      * @param messageSource the message source
-     * @param commonConfig  the common config
+     * @param i18nConfig    the common config
      */
-    public I18nHelper(MessageSource messageSource, CommonConfig commonConfig) {
+    public I18nHelper(MessageSource messageSource, I18nConfig i18nConfig) {
         this.messageSource = messageSource;
-        this.commonConfig = commonConfig;
+        this.i18nConfig = i18nConfig;
     }
 
     /**
@@ -50,7 +50,7 @@ public class I18nHelper {
      * @return the i 18 n message
      */
     public String getI18nMessage(String code, Object[] params) {
-        Locale locale = StringUtils.parseLocale(commonConfig.getLang());
+        Locale locale = StringUtils.parseLocale(i18nConfig.getLang());
         if (locale == null) {
             locale = Locale.US;
         }
