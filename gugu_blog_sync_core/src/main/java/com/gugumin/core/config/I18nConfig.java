@@ -21,7 +21,7 @@ import java.util.Set;
  */
 @Configuration
 @Slf4j
-public class CommonConfig {
+public class I18nConfig {
     private static final String MESSAGE_BEAN_NAME_SPLIT = ";";
     @Value(value = "${core-config.i18n.name:i18n.messages}")
     private String messageBeanName;
