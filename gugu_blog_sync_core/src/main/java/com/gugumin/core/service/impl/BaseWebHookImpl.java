@@ -78,11 +78,10 @@ public abstract class BaseWebHookImpl implements IHandlerWebhook, IChangeFileNam
         List<Path> pathList = fileNameList.stream().map(repositoryPath::resolve).collect(Collectors.toList());
         List<Article> articleList = new LinkedList<>();
         for (Path path : pathList) {
-            String fileUri = path.toString();
-            if (fileUri.endsWith(MD_SUFFIX)) {
-                Path filePath = repositoryPath.resolve(fileUri);
-                String title = fileUri.substring(fileUri.lastIndexOf("/") + 1).replace(MD_SUFFIX, "");
-                String context = FileUtil.read(filePath);
+            String fileName = path.getFileName().toString();
+            if (fileName.endsWith(MD_SUFFIX)) {
+                String title = fileName.substring(0, fileName.lastIndexOf(MD_SUFFIX));
+                String context = FileUtil.read(path);
                 MetaType metaType = Article.parseMetaFromContext(context);
                 articleList.add(metaType.parseMetaAndConvert(title, context));
             }
