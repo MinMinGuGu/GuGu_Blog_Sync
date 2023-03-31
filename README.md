@@ -54,3 +54,7 @@
 ## 文档
 
 请转到 [Wiki](https://github.com/MinMinGuGu/GuGu_Blog_Sync/wiki)
+
+## License
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMinMinGuGu%2FGuGu_Blog_Sync.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMinMinGuGu%2FGuGu_Blog_Sync?ref=badge_large)
