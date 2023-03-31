@@ -2,6 +2,9 @@
     <p>
         <img src="https://img.shields.io/badge/Java-11-brightgreen"/>
         <img src="https://img.shields.io/badge/GuGu__Blog__Sync-v0.0.1-green"/>
+        <a href="https://app.fossa.com/projects/git%2Bgithub.com%2FMinMinGuGu%2FGuGu_Blog_Sync?ref=badge_shield">
+            <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FMinMinGuGu%2FGuGu_Blog_Sync.svg?type=shield" />
+        </a>
     </p>
 </div>
 <p align="center">基于Github仓库的Webhook实现的个人博客文章同步框架。</p>
