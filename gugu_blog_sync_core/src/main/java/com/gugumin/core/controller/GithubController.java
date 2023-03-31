@@ -1,7 +1,7 @@
 package com.gugumin.core.controller;
 
 import com.gugumin.core.event.listener.AppStartedListener;
-import com.gugumin.core.service.IGithubWebhook;
+import com.gugumin.core.service.IHandlerWebhook;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,15 +17,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/github")
 public class GithubController {
-    private final IGithubWebhook githubWebhook;
+    private final IHandlerWebhook gitHubWebHookImpl;
 
     /**
      * Instantiates a new Webhook controller.
      *
-     * @param githubWebhook the github webhook
+     * @param gitHubWebHookImpl the githubWebhook
      */
-    public GithubController(IGithubWebhook githubWebhook) {
-        this.githubWebhook = githubWebhook;
+    public GithubController(IHandlerWebhook gitHubWebHookImpl) {
+        this.gitHubWebHookImpl = gitHubWebHookImpl;
     }
 
     /**
@@ -39,7 +39,7 @@ public class GithubController {
         if (AppStartedListener.consumeInitFlag()) {
             return ResponseEntity.ok().build();
         }
-        githubWebhook.handler(payload);
+        gitHubWebHookImpl.handler(payload);
         return ResponseEntity.ok().build();
     }
 }
