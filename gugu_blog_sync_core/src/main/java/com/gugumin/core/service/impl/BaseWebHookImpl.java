@@ -14,9 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PreDestroy;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public abstract class BaseWebHookImpl implements IHandlerWebhook, IChangeFileNames {
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor(r -> new Thread(r, "WebHook-Task"));
     private static final String MD_SUFFIX = ".md";
     private final CoreConfig coreConfig;
     private final IGitService gitService;
@@ -51,17 +55,23 @@ public abstract class BaseWebHookImpl implements IHandlerWebhook, IChangeFileNam
         Path repositoryPath = coreConfig.getRepositoryPath();
         List<String> deleteFileNames = getDeleteFileNames(payload);
         if (!CollectionUtils.isEmpty(deleteFileNames)) {
-            publisher.publishEvent(new DeleteArticleEvent(this, analyzeAndRead(repositoryPath, deleteFileNames)));
+            List<Article> articleList = analyzeAndRead(repositoryPath, deleteFileNames);
+            EXECUTOR_SERVICE.execute(() -> publisher.publishEvent(new DeleteArticleEvent(this, articleList)));
         }
         gitService.updateRepository();
         List<String> addFileNames = getAddFileNames(payload);
         if (!CollectionUtils.isEmpty(addFileNames)) {
-            publisher.publishEvent(new AddArticleEvent(this, analyzeAndRead(repositoryPath, addFileNames)));
+            EXECUTOR_SERVICE.execute(() -> publisher.publishEvent(new AddArticleEvent(this, analyzeAndRead(repositoryPath, addFileNames))));
         }
         List<String> updateFileNames = getUpdateFileNames(payload);
         if (!CollectionUtils.isEmpty(updateFileNames)) {
-            publisher.publishEvent(new UpdateArticleEvent(this, analyzeAndRead(repositoryPath, updateFileNames)));
+            EXECUTOR_SERVICE.execute(() -> publisher.publishEvent(new UpdateArticleEvent(this, analyzeAndRead(repositoryPath, updateFileNames))));
         }
+    }
+
+    @PreDestroy
+    private void closer() {
+        EXECUTOR_SERVICE.shutdown();
     }
 
     private List<Article> analyzeAndRead(Path repositoryPath, List<String> fileNameList) {
