@@ -12,8 +12,6 @@ import java.util.List;
  */
 @Data
 public class Meta {
-    private String oldTitle;
-    private String title;
     private List<Category> categories;
     private List<Tag> tags;
     private String summary;
